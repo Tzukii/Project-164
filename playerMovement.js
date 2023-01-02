@@ -6,9 +6,9 @@ AFRAME.registerComponent("player-movement", {
     window.addEventListener("keydown", (e) => {
       if (
         e.key === "W" ||
-        e.key === "A" ||
         e.key === "D" ||
-        e.key === "S"
+        e.key === "S" ||
+        e.key === "A"
       ) {
         var entity = document.querySelector("#sound2");
         entity.components.sound.playSound();

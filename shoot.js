@@ -9,10 +9,10 @@ AFRAME.registerComponent("bullets", {
 
         bullet.setAttribute("geometry", {
           primitive: "sphere",
-          radius: 0.1,
+          radius: 0.2,
         });
 
-        bullet.setAttribute("material", "color", "black");
+        bullet.setAttribute("material", "color", "blue");
 
         var cam = document.querySelector("#camera-rig");
 
@@ -21,7 +21,7 @@ AFRAME.registerComponent("bullets", {
         bullet.setAttribute("position", {
           x: pos.x,
           y: pos.y + 1.6,
-          z: pos.z - 0.08,
+          z: pos.z - 4.4,
         });
 
         var camera = document.querySelector("#camera").object3D;
@@ -31,16 +31,17 @@ AFRAME.registerComponent("bullets", {
         camera.getWorldDirection(direction);
 
         //set the velocity and it's direction
-        bullet.setAttribute("velocity", direction.multiplyScalar(-20));
+        bullet.setAttribute("velocity", direction.multiplyScalar(-50));
 
         var scene = document.querySelector("#scene");
 
         //set the bullet as the dynamic entity
         bullet.setAttribute("dynamic-body", {
           shape: "sphere",
-          mass: "0",
+          mass: "20",
         });
-        bullet.setAttribute("visible", false);
+
+        bullet.setAttribute("visible", true);
 
         //add the collide event listener to the bullet
         bullet.addEventListener("collide", this.removeBullet);
@@ -60,43 +61,23 @@ AFRAME.registerComponent("bullets", {
     //element which is hit
     var elementHit = e.detail.body.el;
 
-    //Create paint splash
-    var paint = document.createElement("a-entity");
-    var pos = element.getAttribute("position")
-    var rotate = elementHit.getAttribute("rotation")
+    if (elementHit.id.includes("enemy")) {
 
-    //set the position, rotation, scale
-    paint.setAttribute("position", {
-      x: pos.x,
-      y: pos.y,
-      z: pos.z,
-    });
-    paint.setAttribute("rotation", {
-      x: rotate.x,
-      y: rotate.y,
-      z: rotate.z,
-    });
-    paint.setAttribute("scale", {
-      x: 2,
-      y: 2,
-      z: 2,
-    });
+      var countMonsterEl = document.querySelector("#countMonster");
+      var monsterFired = parseInt(countMonsterEl.getAttribute("text").value);
+      monsterFired -= 1;
 
-    //choose the paint splash image randomly
-    var colorNum = parseInt(Math.random() * 8 + 1)
+      countMonsterEl.setAttribute("text", {
+        value: monsterFired
+      });
 
-    paint.setAttribute("material", {
-      opacity: 1,
-      transparent: true,
-      src: "./images/paint splash-0" + colorNum + ".png"
-    });
+      if (monsterFired === 0) {
+        var txt = document.querySelector("#completed");
+        txt.setAttribute("visible", true);
 
-    paint.setAttribute("geometry", {
-      primitive: "plane",
-      width: 0.5,
-      height: 0.5
-    });
-    scene.appendChild(paint)
+      }
+      scene.removeChild(elementHit);
+    }
 
     //remove event listener
     element.removeEventListener("collide", this.removeBullet);
